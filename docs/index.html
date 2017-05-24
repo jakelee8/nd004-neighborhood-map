@@ -1,0 +1,52 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neighborhood Map</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+  </head>
+  <body>
+    <aside id="locations" class="off-canvas position-right reveal-for-medium" data-off-canvas>
+      <input id="query" class="input-group-field" type="search" placeholder="Search..." data-bind="textInput: query" />
+      <div class="infinite-progress" data-bind="css: { active: requestPending() }"></div>
+      <div data-bind="if: emptyResults">
+        <div class="callout alert">No places found <i class="fa fa-frown-o" aria-hidden="true"></i></div>
+      </div>
+      <ul class="vertical menu" data-bind="foreach: places">
+        <li>
+          <a href="#" data-bind="click: select">
+            <img data-bind="attr: { src: icon }" class="place-icon" />&nbsp;<span data-bind="text: name">&nbsp;</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+    
+    <section id="map" class="off-canvas-content" data-off-canvas-content></section>
+    
+    <nav id="controls">
+      <span class="button" data-toggle="locations"><i class="fa fa-search" aria-hidden="true"></i></span>
+    </nav>
+    
+    <script type="text/html" id="place-info-template">
+      <h2 class="place-title">
+        <img data-bind="attr: { src: icon }" class="place-icon" />&nbsp;<span data-bind="text: name"></span>
+      </h2>
+      <p><address data-bind="text: address"></address></p>
+      <p data-bind="foreach: photos">
+        <img class="thumbnail" data-bind="attr: { src: url }" />
+      </p>
+      <p data-bind="foreach: tags">
+        <span class="label" data-bind="text: $data"></span>
+      </p>
+      <p class="small">Data provided by Google Maps Places</p>
+    </script>
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script defer async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdkhFjAIoO6askob57SkvAQS7uv9iAlwA&callback=initMap&libraries=places"></script>
+    
+  </body>
+</html>

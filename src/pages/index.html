@@ -1,0 +1,49 @@
+<!-- Places search side bar -->
+<aside id="places" class="off-canvas position-right reveal-for-medium" data-off-canvas>
+
+  <!-- Search bar with progress bar underneath -->
+  <input id="query" class="input-group-field" type="search" placeholder="Search..." data-bind="textInput: query" />
+  <div class="infinite-progress" data-bind="css: { active: requestPending() }"></div>
+
+  <!-- Empty search result message -->
+  <div data-bind="if: emptyResults">
+    <div class="callout alert">No places found <i class="fa fa-frown-o" aria-hidden="true"></i></div>
+  </div>
+
+  <!-- Search result list -->
+  <ul class="vertical menu" data-bind="foreach: places">
+    <li>
+      <a href="#" data-bind="click: select">
+        <img data-bind="attr: { src: icon }" class="place-icon" />&nbsp;<span data-bind="text: name">&nbsp;</span>
+      </a>
+    </li>
+  </ul>
+</aside>
+
+<!-- Google Map canvas -->
+<section id="map" class="off-canvas-content" data-off-canvas-content></section>
+
+<!-- Floating search button for smaller screens to open search side bar -->
+<nav id="controls">
+  <span class="button" data-toggle="places"><i class="fa fa-search" aria-hidden="true"></i></span>
+</nav>
+
+<!-- Template for place info pop-up in map view -->
+<script type="text/html" id="place-info-template">
+  <h2 class="place-title">
+    <img data-bind="attr: { src: icon }" class="place-icon" />&nbsp;<span data-bind="text: name"></span>
+  </h2>
+  <p><address data-bind="text: address"></address></p>
+  <p data-bind="foreach: photos">
+    <img class="thumbnail" data-bind="attr: { src: url }" />
+  </p>
+  <p data-bind="foreach: tags">
+    <span class="label" data-bind="text: $data"></span>
+  </p>
+  <p class="small">Data provided by Google Maps Places</p>
+</script>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+<script src="{{root}}assets/js/app.js"></script>
+<script defer async src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap&libraries=places"></script>
