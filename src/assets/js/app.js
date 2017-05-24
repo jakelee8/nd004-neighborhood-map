@@ -124,7 +124,7 @@ let googleReady, googleError;
       }
 
       let params = {
-        data: '[out:json];node' + query + ';out meta 20;'
+        data: '[out:json];node' + query + ';out meta 50;'
       };
 
       this.pending(true);
@@ -178,7 +178,12 @@ let googleReady, googleError;
 
     _makePlace (it) {
       // Create place object
-      let place = {id: it.id, location: {lat: it.lat, lng: it.lon}};
+      let place = {
+        id: it.id,
+        location: {lat: it.lat, lng: it.lon},
+        address: 'Address not available',
+        phone: 'Phone number not available.'
+      };
 
       // Build address
       let addr = [];
@@ -200,23 +205,27 @@ let googleReady, googleError;
       }
 
       // Collect remaining tags
-      let tags = {};
+      let tags = [];
       for (let key in it.tags) {
         switch (key) {
           case 'name':
           case 'amenity':
           case 'phone':
+          case 'website':
             place[key] = it.tags[key];
             break;
           case 'source':
             place.source = it.tags.source.replace(/;/g, ', ');
             break;
           default:
-            if (!key.startsWith('addr:')) {
-              tags[key] = it.tags[key];
+            if (!key.startsWith('addr:') && !key.startsWith('checked_exists:')) {
+              tags.push({ name: key, value: it.tags[key]});
             }
         }
       }
+
+      // Save tags.
+      place.tags = tags;
 
       return place;
     }
@@ -338,7 +347,8 @@ let googleReady, googleError;
      * Focus on this marker.
      */
     focus () {
-      this._marker.setIcon('assets/img/red-flag.svg');
+      this._marker.setZIndex(1000);
+      this._marker.setIcon('assets/img/flag.png');
       this._marker.setAnimation(google.maps.Animation.DROP);
       this._map.panTo(this._position);
     }
@@ -347,6 +357,7 @@ let googleReady, googleError;
      * Unfocus from this marker.
      */
     blur () {
+      this._marker.setZIndex();
       this._marker.setIcon();
     }
   }

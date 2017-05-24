@@ -14,16 +14,24 @@
       <!-- Search -->
       <div class="input-group">
         <input id="query" class="input-group-field" type="search" placeholder="Search..." data-bind="textInput: query">
-        <span class="input-group-button" data-open="amenity-filter">
-          <span class="button"><i class="fa fa-filter" aria-hidden="true"></i></span>
-        </span>
+        <div class="input-group-button" data-bind="click: onQueryChange">
+          <button type="button" class="button fa fa-search"></button>
+        </div>
       </div>
+    
+      <!-- Amenities notice -->
+      <p class="amenity-title" data-open="amenity-filter">
+        Showing:
+        <span data-bind="if: selectedAmenity()"><span data-bind="text: selectedAmenity"></span></span>
+        <span data-bind="ifnot: selectedAmenity()">all</span>
+        <span class="pull-right">Edit Filter</span>
+      </p>
     
       <!-- Amenity filter -->
       <div class="tiny reveal" id="amenity-filter" data-reveal>
         <ul class="vertical menu">
-          <li class="menu-text">Amenity Filter</li>
-          <li><a href="#" data-close data-bind="{ click: function() { selectedAmenity(null) } }">(all)</a></li>
+          <li class="menu-text">Filter by Amenity</li>
+          <li><a href="#" data-close data-bind="{ click: function() { selectedAmenity(null) } }">all</a></li>
           <!-- ko foreach: amenities -->
           <li><a href="#" data-close data-bind="{ click: function() { $parent.selectedAmenity($data) }, text: $data }"></a></li>
           <!-- /ko -->
@@ -32,11 +40,6 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-    
-      <!-- Amenities notice -->
-      <p class="amenity-title" data-bind="css: { 'is-hidden': !selectedAmenity() }">
-        Amenity: <span data-bind="text: selectedAmenity"></span>
-      </p>
     
       <!-- Progress bar -->
       <div class="infinite-progress" data-bind="css: { 'progress-active': pending() }"></div>
@@ -76,8 +79,13 @@
           </div>
           <div class="place-content">
             <div class="place-content-wrapper">
-              <address class="place-address"
-                       data-bind="{ css: { 'is-hidden': !$data.address }, text: $data.address }"></address>
+              <!--div data-bind="foreach: tags">
+                <span class="label secondary"><span data-bind="text: name"></span>: <span data-bind="text: value"></span></span>
+              </div-->
+              <p>
+                <address class="place-address" data-bind="text: $data.address"></address>
+                <address class="place-address" data-bind="text: $data.phone"></address>
+              </p>
               <p>
                 <small data-bind="css: { 'is-hidden': !$data.source }">Source: <span data-bind="text: $data.source">&nbsp;</span><br></small>
                 <small>&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors.</small>

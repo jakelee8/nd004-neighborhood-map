@@ -32,6 +32,7 @@ html, body, #map {
   font-weight: bold;
   background-color: map-get($foundation-palette, secondary);
   color: $white;
+  cursor: pointer;
 }
 
 .place-selected {
@@ -98,11 +99,10 @@ html, body, #map {
 }
 
 .place-content-wrapper {
-  padding: 0.5rem;
+  padding: 0 0.5rem 0.5rem;
 }
 
 .place-address {
-  margin: -1vh 0 0;
   font-size: inherit;
   color: map-get($foundation-palette, secondary);
 }
