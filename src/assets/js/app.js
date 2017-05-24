@@ -44,12 +44,24 @@ let googleReady, googleError;
       // Create observables
       this.query = ko.observable();
       this.places = ko.observableArray();
-      this.amenities = ko.observableArray();
+      this.amenities = ko.observableArray(['']);
       this.selectedPlace = ko.observable();
       this.selectedAmenity = ko.observable();
       this.expanded = ko.observable(false);
       this.pending = ko.observable(false);
       this.error = ko.observable();
+
+      // Create calculated observables
+      this.filteredPlaces = ko.computed(() => {
+        let places = this.places();
+        var amenity = this.selectedAmenity();
+        if (amenity) {
+          places = ko.utils.arrayFilter(places, (it) => {
+            return it.amenity == amenity;
+          });
+        }
+        return places;
+      });
 
       // Create child views
       this.map = new GoogleMapView();
@@ -59,7 +71,6 @@ let googleReady, googleError;
 
       // Trigger search on search field change
       this.query.subscribe(this.onQueryChange);
-      this.selectedAmenity.subscribe(this.onQueryChange);
     }
 
     /**
@@ -107,24 +118,18 @@ let googleReady, googleError;
         options = {};
       }
 
+      // Build query
       let query = ('(around:' + (20000 / this.map.zoom()) + ',' +
                    center.lat() + ',' + center.lng() + ')');
-      query += '[name]';
+      query += '[name][amenity]';
       let q = _.trim(options.query || '');
       if (q) {
         q = q.replace(/[^a-z0-9]+/ig, '.*');
         query += '[~"."~"' + q + '",i]';
       }
-      // Add amenity filter
-      let amenity = _.trim(options.amenity || '');
-      if (amenity) {
-        query += '[amenity=' + amenity + ']';
-      } else {
-        query += '[amenity]';
-      }
 
       let params = {
-        data: '[out:json];node' + query + ';out meta 50;'
+        data: '[out:json];node' + query + ';out meta 100;'
       };
 
       this.pending(true);

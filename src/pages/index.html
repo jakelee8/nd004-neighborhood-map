@@ -9,26 +9,10 @@
     </div>
   </div>
 
-  <!-- Amenities notice -->
-  <p class="amenity-title" data-open="amenity-filter">
-    Showing:
-    <span data-bind="if: selectedAmenity()"><span data-bind="text: selectedAmenity"></span></span>
-    <span data-bind="ifnot: selectedAmenity()">all</span>
-    <span class="pull-right">Edit Filter</span>
-  </p>
-
-  <!-- Amenity filter -->
-  <div class="tiny reveal" id="amenity-filter" data-reveal>
-    <ul class="vertical menu">
-      <li class="menu-text">Filter by Amenity</li>
-      <li><a href="#" data-close data-bind="{ click: function() { selectedAmenity(null) } }">all</a></li>
-      <!-- ko foreach: amenities -->
-      <li><a href="#" data-close data-bind="{ click: function() { $parent.selectedAmenity($data) }, text: $data }"></a></li>
-      <!-- /ko -->
-    </ul>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-      <span aria-hidden="true">&times;</span>
-    </button>
+  <!-- Amenities filter -->
+  <div class="input-group">
+    <span class="input-group-label">Filter</span>
+    <select class="input-group-field" data-bind="{ options: amenities, value: selectedAmenity}"></select>
   </div>
 
   <!-- Progress bar -->
@@ -40,7 +24,7 @@
   </div>
 
   <!-- Search result list -->
-  <ul class="vertical menu" data-bind="foreach: places">
+  <ul class="vertical menu" data-bind="foreach: filteredPlaces">
     <li><a href="#" data-bind="{ click: function() { $parent.selectedPlace($data); $('#places').foundation('close'); }, text: name }"></a></li>
   </ul>
 
