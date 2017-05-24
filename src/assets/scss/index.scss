@@ -13,8 +13,98 @@ html, body, #map {
   margin-left: 1px;
 }
 
+#content {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+#places {
+  .input-group, .button {
+    margin-bottom: 0;
+  }
+}
+
+.amenity-title {
+  margin: 0;
+  padding: 0.2rem 1rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background-color: map-get($foundation-palette, secondary);
+  color: $white;
+}
+
+.place-selected {
+  padding-bottom: 3rem;
+}
+
+.place-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.place-container {
+  background-color: $white;
+  box-shadow: 0 -4px 40px black;
+}
+
+.place-content {
+  overflow: hidden;
+  transition: 1s max-height;
+
+  .collapsed & {
+    max-height: 0;
+  }
+
+  .expanded & {
+    max-height: 200px;
+  }
+}
+
+@keyframes place-expand {
+  0% {
+    top: -60px;
+  }
+
+  100% {
+    top: -100%;
+  }
+}
+
+@keyframes place-collapse {
+  0% {
+    top: -100%;
+  }
+
+  100% {
+    top: -60px;
+  }
+}
+
 .place-title {
-  font-size: 200%;
+  padding: 0.5rem;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .button {
+    margin: 0;
+  }
+}
+
+.place-content-wrapper {
+  padding: 0.5rem;
+}
+
+.place-address {
+  margin: -1vh 0 0;
+  font-size: inherit;
+  color: map-get($foundation-palette, secondary);
 }
 
 .place-icon {
@@ -24,9 +114,8 @@ html, body, #map {
 
 .infinite-progress {
   height: 2px;
-  margin: -1px 0;
 
-  &.active::after {
+  &.progress-active::after {
     content: ' ';
     display: block;
     width: 100%;

@@ -17,6 +17,12 @@ brew install yarn
 
 On other platforms, please visit the [Yarn][yarn] website for instructions.
 
+Next, install the project dependencies with Yarn.
+
+```sh
+yarn install
+```
+
 
 ## Develop
 

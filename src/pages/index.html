@@ -1,49 +1,91 @@
 <!-- Places search side bar -->
 <aside id="places" class="off-canvas position-right reveal-for-medium" data-off-canvas>
 
-  <!-- Search bar with progress bar underneath -->
-  <input id="query" class="input-group-field" type="search" placeholder="Search..." data-bind="textInput: query" />
-  <div class="infinite-progress" data-bind="css: { active: requestPending() }"></div>
+  <!-- Search -->
+  <div class="input-group">
+    <input id="query" class="input-group-field" type="search" placeholder="Search..." data-bind="textInput: query">
+    <span class="input-group-button" data-open="amenity-filter">
+      <span class="button"><i class="fa fa-filter" aria-hidden="true"></i></span>
+    </span>
+  </div>
+
+  <!-- Amenity filter -->
+  <div class="tiny reveal" id="amenity-filter" data-reveal>
+    <ul class="vertical menu">
+      <li class="menu-text">Amenity Filter</li>
+      <li><a href="#" data-close data-bind="{ click: function() { selectedAmenity(null) } }">(all)</a></li>
+      <!-- ko foreach: amenities -->
+      <li><a href="#" data-close data-bind="{ click: function() { $parent.selectedAmenity($data) }, text: $data }"></a></li>
+      <!-- /ko -->
+    </ul>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <!-- Amenities notice -->
+  <p class="amenity-title" data-bind="css: { 'is-hidden': !selectedAmenity() }">
+    Amenity: <span data-bind="text: selectedAmenity"></span>
+  </p>
+
+  <!-- Progress bar -->
+  <div class="infinite-progress" data-bind="css: { 'progress-active': pending() }"></div>
 
   <!-- Empty search result message -->
-  <div data-bind="if: emptyResults">
-    <div class="callout alert">No places found <i class="fa fa-frown-o" aria-hidden="true"></i></div>
+  <div data-bind="if: error">
+    <div class="callout alert"><span data-bind="text: error"></span>&nbsp;<i class="fa fa-frown-o" aria-hidden="true"></i></div>
   </div>
 
   <!-- Search result list -->
   <ul class="vertical menu" data-bind="foreach: places">
-    <li>
-      <a href="#" data-bind="click: select">
-        <img data-bind="attr: { src: icon }" class="place-icon" />&nbsp;<span data-bind="text: name">&nbsp;</span>
-      </a>
-    </li>
+    <li><a href="#" data-bind="{ click: function() { $parent.selectedPlace($data); $('#places').foundation('close'); }, text: name }"></a></li>
   </ul>
+
+  <!-- Attribution -->
+  <p class="row column">
+    <small>&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors.</small>
+  </p>
 </aside>
 
 <!-- Google Map canvas -->
-<section id="map" class="off-canvas-content" data-off-canvas-content></section>
+<section id="content" class="off-canvas-content" data-bind="css: { 'place-selected': !!selectedPlace() }" data-off-canvas-content>
+  <div id="map">
+    <!-- Empty search result message -->
+    <div class="callout alert">
+      Loading Google Maps...
+      <span data-bind="css: { 'is-hidden': !map.ready() }">ERROR&nbsp;<i class="fa fa-frown-o" aria-hidden="true"></i></span>
+    </div>
+  </div>
+
+  <!-- Pop-up info view -->
+  <aside class="place-info" data-bind="css: { 'is-hidden': !selectedPlace(), collapsed: !expanded(), expanded: expanded() }">
+    <div class="place-container" data-bind="with: selectedPlace">
+      <div class="place-title clearfix" data-bind="click: function () { $parent.expanded(!$parent.expanded()) }">
+        <i class="button tiny fa pull-right" aria-hidden="true" data-bind="css: { 'fa-compress': $parent.expanded(), 'fa-expand': !$parent.expanded() }"></i>
+        <h1 data-bind="text: name"></h1>
+      </div>
+      <div class="place-content">
+        <div class="place-content-wrapper">
+          <address class="place-address"
+                   data-bind="{ css: { 'is-hidden': !$data.address }, text: $data.address }"></address>
+          <p>
+            <small data-bind="css: { 'is-hidden': !$data.source }">Source: <span data-bind="text: $data.source">&nbsp;</span><br></small>
+            <small>&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors.</small>
+          </p>
+        </div>
+      </div>
+    </div>
+  </aside>
+</section>
 
 <!-- Floating search button for smaller screens to open search side bar -->
 <nav id="controls">
   <span class="button" data-toggle="places"><i class="fa fa-search" aria-hidden="true"></i></span>
 </nav>
 
-<!-- Template for place info pop-up in map view -->
-<script type="text/html" id="place-info-template">
-  <h2 class="place-title">
-    <img data-bind="attr: { src: icon }" class="place-icon" />&nbsp;<span data-bind="text: name"></span>
-  </h2>
-  <p><address data-bind="text: address"></address></p>
-  <p data-bind="foreach: photos">
-    <img class="thumbnail" data-bind="attr: { src: url }" />
-  </p>
-  <p data-bind="foreach: tags">
-    <span class="label" data-bind="text: $data"></span>
-  </p>
-  <p class="small">Data provided by Google Maps Places</p>
-</script>
-
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
 <script src="{{root}}assets/js/app.js"></script>
-<script defer async src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&amp;callback=googleReady"
+        onerror="googleError()"
+        defer async></script>
