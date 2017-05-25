@@ -98,11 +98,10 @@ let googleReady, googleError;
     }
 
     onFilterChange () {
-      // Clear map markers
-      this.map.clearMarkers();
+      let amenity = this.selectedAmenity();
       // Update map markers
-      this.filteredPlaces().forEach((it) => {
-        this.map.addMarker(it.location);
+      this.places().forEach((place) => {
+        place._marker.visible(!amenity || place.amenity == amenity);
       });
     }
 
@@ -163,6 +162,7 @@ let googleReady, googleError;
       this.map.clearMarkers();
 
       // Get list of known amenities.
+      let amenity = this.selectedAmenity();
       let amenities = this.amenities();
 
       // Process results
@@ -173,9 +173,11 @@ let googleReady, googleError;
         // Process single result into place
         let place = this._makePlace(it);
         // Add map marker
-        place._marker = this.map.addMarker(place.location);
+        let marker = place._marker = this.map.addMarker(place.location);
         // Add marker click handler
-        place._marker.on('click', () => this.selectedPlace(place));
+        marker.on('click', () => this.selectedPlace(place));
+        // Hide the marker if filtered
+        marker.visible(!amenity || place.amenity == amenity);
         // Collect place
         places.push(place);
         // Update amenities
@@ -377,6 +379,17 @@ let googleReady, googleError;
     blur () {
       this._marker.setZIndex();
       this._marker.setIcon();
+    }
+
+    /**
+     * Get or set visibility.
+     */
+    visible () {
+      if (arguments.length) {
+        this._marker.setVisible(arguments[0]);
+      } else {
+        return this._marker.getVisible();
+      }
     }
   }
 
