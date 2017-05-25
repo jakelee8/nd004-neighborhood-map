@@ -39,6 +39,7 @@ let googleReady, googleError;
       this.search = _.debounce(this.search.bind(this), 500);
       this.onSelect = this.onSelect.bind(this);
       this.onQueryChange = this.onQueryChange.bind(this);
+      this.onFilterChange = this.onFilterChange.bind(this);
       this.onResult = this.onResult.bind(this);
 
       // Create observables
@@ -71,6 +72,9 @@ let googleReady, googleError;
 
       // Trigger search on search field change
       this.query.subscribe(this.onQueryChange);
+
+      // Update map markers on filter change
+      this.filteredPlaces.subscribe(this.onFilterChange);
     }
 
     /**
@@ -91,6 +95,15 @@ let googleReady, googleError;
       if (place) {
         place._marker.focus();
       }
+    }
+
+    onFilterChange () {
+      // Clear map markers
+      this.map.clearMarkers();
+      // Update map markers
+      this.filteredPlaces().forEach((it) => {
+        this.map.addMarker(it.location);
+      });
     }
 
     onQueryChange () {
